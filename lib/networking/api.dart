@@ -7,7 +7,8 @@ import './customException.dart';
 
 class Api {
   // final baseUrl = 'http://192.168.0.105';
-  //final baseUrl = 'http://192.168.0.105';
+  //final baseUrl = 'http://52.77.186.131:5000';
+
    final baseUrl = 'https://sasthosheba.herokuapp.com';
 
   Future<dynamic> get(String url, bool authorization) async {
@@ -21,7 +22,7 @@ class Api {
       });
     }
     return _response(await http.get(
-      baseUrl + url,
+      Uri.parse(baseUrl + url),
       headers: headers,
     ));
   }
@@ -37,7 +38,7 @@ class Api {
       });
     }
     return _response(await http.post(
-      baseUrl + url,
+      Uri.parse(baseUrl + url),
       headers: headers,
       body: jsonEncode(object),
     ));

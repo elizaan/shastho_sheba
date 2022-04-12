@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -6,18 +7,19 @@ import 'package:intl/intl.dart';
 import 'baseBloc.dart';
 import '../networking/response.dart';
 import '../repositories/authentication.dart';
-import '../models/patient.dart';
+import '../models/intermediary.dart';
 
-class RegistrationBloc extends ChangeNotifier implements BaseBloc {
+class InterRegistrationBloc extends ChangeNotifier implements BaseBloc {
   AuthenticationRepository _authenticationRepository;
   StreamController _registrationController;
+  final age = TextEditingController();
   String _sex = 'Male';
-  DateTime _selectedDate;
   final formKey = GlobalKey<FormState>();
-  final dob = TextEditingController();
   final pass = TextEditingController();
   final name = TextEditingController();
   final mobileNo = TextEditingController();
+  String _occupation_type = 'Orphanage-administrator';
+  final location = TextEditingController();
   Validator validator;
 
   StreamSink<Response<String>> get sink => _registrationController.sink;
@@ -25,39 +27,38 @@ class RegistrationBloc extends ChangeNotifier implements BaseBloc {
   Stream<Response<String>> get stream => _registrationController.stream;
 
   String get sex => _sex;
-
-  DateTime get selectedDate => _selectedDate;
+  String get occupation_type => _occupation_type;
 
   set sex(String value) {
     _sex = value;
     notifyListeners();
   }
 
-  set selectedDate(DateTime value) {
-    _selectedDate = value;
-    dob.text = DateFormat.yMMMMd('en_US').format(selectedDate);
+  set occupation_type(String value) {
+    _occupation_type = value;
     notifyListeners();
   }
 
-  RegistrationBloc() {
+  InterRegistrationBloc() {
     _authenticationRepository = AuthenticationRepository();
     _registrationController = StreamController<Response<String>>();
     validator = Validator(pass);
-    //validator = Validator();
   }
 
   void register() async {
     if (formKey.currentState.validate()) {
-      Patient patient = Patient(
+      Intermediary intermediary = Intermediary(
         name: name.text,
         mobileNo: mobileNo.text,
-        dob: selectedDate,
+        age: int.parse(age.text),
         sex: sex,
-        // password: pass.text,
+        occupation_type: occupation_type,
+        location: location.text,
+        password: pass.text,
       );
       sink.add(Response.loading('Please Wait'));
       try {
-        await _authenticationRepository.register(patient);
+        await _authenticationRepository.interregister(intermediary);
         sink.add(Response.completed('Registered Successfully'));
       } catch (e) {
         sink.add(Response.error(e.toString()));
@@ -68,8 +69,9 @@ class RegistrationBloc extends ChangeNotifier implements BaseBloc {
   @override
   void dispose() {
     _registrationController?.close();
-    dob.dispose();
-    // pass.dispose();
+    age.dispose();
+    location.dispose();
+    pass.dispose();
     name.dispose();
     mobileNo.dispose();
     super.dispose();
@@ -88,31 +90,38 @@ class Validator {
     return null;
   }
 
-  // String mobileNoValidator(String value) {
-  //   if (value.isEmpty) {
-  //     return "Please enter your Mobile Number";
-  //   }
-  //   return null;
-  // }
-
-  String dobValidator(String value) {
+  String mobileNoValidator(String value) {
     if (value.isEmpty) {
-      return "Please enter your Date of Birth";
+      return "Please enter your Mobile Number";
     }
     return null;
   }
 
-  // String passwordValidator(String value) {
-  //   if (value.isEmpty) {
-  //     return "Please provide a password";
-  //   }
-  //   return null;
-  // }
+  String ageValidator(String value) {
+    
+    if (int.parse(value).isNaN || int.parse(value).isInfinite || 
+    int.parse(value).isNegative) {
+      return "Please enter your age";
+    }
+    return null;
+  }
+  String locationValidator(String value) {
+    if (value.isEmpty) {
+      return "Please enter your location";
+    }
+    return null;
+  }
+  String passwordValidator(String value) {
+    if (value.isEmpty) {
+      return "Please provide a password";
+    }
+    return null;
+  }
 
-  // String confirmPasswordValidator(String value) {
-  //   if (value != pass.text) {
-  //     return 'Password does not match';
-  //   }
-  //   return null;
-  // }
+  String confirmPasswordValidator(String value) {
+    if (value != pass.text) {
+      return 'Password does not match';
+    }
+    return null;
+  }
 }

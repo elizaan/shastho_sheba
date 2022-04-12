@@ -1,3 +1,4 @@
+import 'package:shastho_sheba/screens/chamber/chambernew.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/splash.dart';
@@ -16,6 +17,11 @@ import 'screens/chamber/chamber.dart';
 import 'screens/videoCall.dart';
 import 'screens/profile.dart';
 import 'screens/transactions.dart';
+import 'screens/Schedule.dart';
+import 'screens/schdoctor.dart';
+import 'screens/inter_reg.dart';
+import 'screens/intermediary_login.dart';
+import 'screens/patient_nav.dart';
 import 'routes.dart';
 import 'utils.dart';
 
@@ -41,9 +47,9 @@ class MyApp extends StatelessWidget {
       initialRoute: splashScreen,
       routes: {
         splashScreen: (context) => SplashScreen(),
-        loginScreen: (context) => LoginScreen(),
+        patientLogScreen: (context) => LoginScreen(),
         homeScreen: (context) => HomeScreen(),
-        registrationScreen: (context) => Registration(),
+        patientRegScreen: (context) => Registration(),
         feedbackScreen: (context) => FeedbackScreen(),
         appointmentsScreen: (context) => AppointmentsScreen(),
         appointmentDetailsScreen: (context) => AppointmentDetails(),
@@ -52,10 +58,16 @@ class MyApp extends StatelessWidget {
         findDoctorsScreen: (context) => FindDoctorsScreen(),
         specialityWiseDoctorListScreen: (context) => DoctorList(),
         doctorProfileScreen: (context) => DoctorProfileScreen(),
-        chamberScreen: (context) => ChamberScreen(),
+        //chamberScreen: (context) => ChamberScreen(),
         videoCallScreen: (context) => VideoCallScreen(),
         profileScreen: (context) => ProfileScreen(),
         transactionsScreen: (context) => TransactionsScreen(),
+        scheduleScreen: (context) => Schedulescreen(),
+        schdoctorScreen: (context) => Schdoctor(),
+        chambernewScreen:(context) => ChambernewScreen(),
+        intermediaryRegScreen:(context)=> Intermed_reg(),
+        intermediaryLogScreen:(context) => Intermed_login(),
+        patientnavScreen :(context) => Patient_Nav()
       },
     );
   }

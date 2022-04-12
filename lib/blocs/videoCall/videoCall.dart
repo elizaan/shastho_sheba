@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_webrtc/webrtc.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'callState.dart';
 import '../chamber/signaling.dart';
@@ -14,14 +14,15 @@ class VideoCallBloc extends ChangeNotifier implements BaseBloc {
   Signaling _signaling;
   RTCVideoRenderer localRenderer = RTCVideoRenderer();
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
-  Appointment _appointment;
+ 
+  String id;
   bool audio = true, video = true;
 
   StreamSink<Response<CallState>> get sink => _videoCallController.sink;
 
   Stream<Response<CallState>> get stream => _videoCallController.stream;
 
-  VideoCallBloc(this._signaling, this._appointment) {
+  VideoCallBloc(this._signaling, this.id) {
     _videoCallController = StreamController<Response<CallState>>();
 
     _signaling.onLocalStream = ((stream) {
@@ -47,7 +48,7 @@ class VideoCallBloc extends ChangeNotifier implements BaseBloc {
   void _initRenderders() {
     localRenderer.initialize();
     remoteRenderer.initialize();
-    remoteRenderer.objectFit = RTCVideoViewObjectFit.RTCVideoViewObjectFitCover;
+    // remoteRenderer.objectFit = RTCVideoViewObjectFit.RTCVideoViewObjectFitCover;
   }
 
   void receiveCall() {
@@ -68,7 +69,7 @@ class VideoCallBloc extends ChangeNotifier implements BaseBloc {
   }
 
   void endCall() {
-    _signaling.endCall(_appointment.id);
+    _signaling.endCall(id);
   }
 
   @override

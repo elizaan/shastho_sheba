@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../utils.dart';
-import '../blocs/registration.dart';
+import '../blocs/intermediaryRegBloc.dart';
 import '../networking/response.dart';
 import '../widgets/loading.dart';
 
-class Registration extends StatelessWidget {
-  @override
+class Intermed_reg extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -22,16 +21,16 @@ class Registration extends StatelessWidget {
           elevation: 0.0,
           backgroundColor: lightBlue,
           centerTitle: true,
-          title: Text('Patient Registration'),
+          title: Text('Registration-of-Intermediary'),
         ),
         body: SafeArea(
           child: Center(
             child: ChangeNotifierProvider(
-              create: (context) => RegistrationBloc(),
+              create: (context) => InterRegistrationBloc(),
               child: Builder(
                 builder: (context) {
-                  RegistrationBloc registrationBloc =
-                      Provider.of<RegistrationBloc>(context);
+                  InterRegistrationBloc registrationBloc =
+                      Provider.of<InterRegistrationBloc>(context);
                   return StreamBuilder(
                     stream: registrationBloc.stream,
                     builder: (context, snapshot) {
@@ -74,6 +73,7 @@ class Registration extends StatelessWidget {
           ),
         ),
       ),
+      
     );
   }
 }
@@ -81,7 +81,7 @@ class Registration extends StatelessWidget {
 class _RegistrationForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    RegistrationBloc registrationBloc = Provider.of<RegistrationBloc>(context);
+    InterRegistrationBloc registrationBloc = Provider.of<InterRegistrationBloc>(context);
     return ListView(
       padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       children: <Widget>[
@@ -97,6 +97,18 @@ class _RegistrationForm extends StatelessWidget {
                   icon: Icon(Icons.person),
                 ),
                 validator: registrationBloc.validator.nameValidator,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              TextFormField(
+                keyboardType:TextInputType.number,
+                controller: registrationBloc.age,
+                decoration: InputDecoration(
+                  labelText: 'Age',
+                  // icon: Icon(Icons.ag),
+                ),
+                validator: registrationBloc.validator.ageValidator,
               ),
               SizedBox(
                 height: 20.0,
@@ -152,68 +164,102 @@ class _RegistrationForm extends StatelessWidget {
                   labelText: 'Mobile No',
                   icon: Icon(Icons.phone_android),
                 ),
-                // validator: registrationBloc.validator.mobileNoValidator,
+                validator: registrationBloc.validator.mobileNoValidator,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Text(
+                      'Type:',
+                      style: M,
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            value: 'Orphanage-administrator',
+                            groupValue: registrationBloc.occupation_type,
+                            onChanged: (String value) {
+                              registrationBloc.occupation_type = value;
+                            },
+                          ),
+                          Text(
+                            'Orphanage-administrator',
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            value: 'Shop-keeper',
+                            groupValue: registrationBloc.occupation_type,
+                            onChanged: (String value) {
+                              registrationBloc.occupation_type = value;
+                            },
+                          ),
+                          Text(
+                            'Shop-keeper',
+                          ),
+                        ],
+                      ),
+                       Row(
+                        children: <Widget>[
+                          Radio(
+                            value: 'Pharmacist',
+                            groupValue: registrationBloc.occupation_type,
+                            onChanged: (String value) {
+                              registrationBloc.occupation_type = value;
+                            },
+                          ),
+                          Text(
+                            'Pharmacist',
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              TextFormField(
+                controller: registrationBloc.location,
+                decoration: InputDecoration(
+                  labelText: 'Location',
+                  icon: Icon(Icons.add_location_sharp),
+                ),
+                validator: registrationBloc.validator.locationValidator,
+              ),
+              
+              TextFormField(
+                controller: registrationBloc.pass,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  icon: Icon(Icons.lock),
+                ),
+                validator: registrationBloc.validator.passwordValidator,
               ),
               SizedBox(
                 height: 20.0,
               ),
               TextFormField(
-                controller: registrationBloc.dob,
-                readOnly: true,
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Date of Birth',
-                  suffixIcon: Icon(Icons.date_range),
-                  icon: Opacity(
-                    child: Icon(Icons.phone_android),
-                    opacity: 0.0,
-                  ),
+                  labelText: 'Confirm Password',
+                  icon: Icon(Icons.lock),
                 ),
-                validator: registrationBloc.validator.dobValidator,
-                onTap: () async {
-                  DateTime selectedDate = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime.now().subtract(
-                      Duration(
-                        days: 36500,
-                      ),
-                    ),
-                    initialDate: registrationBloc.selectedDate == null
-                        ? DateTime.now()
-                        : registrationBloc.selectedDate,
-                    initialDatePickerMode: DatePickerMode.year,
-                    lastDate: DateTime.now(),
-                  );
-                  if (selectedDate != null) {
-                    registrationBloc.selectedDate = selectedDate;
-                  }
-                },
+                validator: registrationBloc.validator.confirmPasswordValidator,
               ),
               SizedBox(
-                height: 20.0,
+                height: 50.0,
               ),
-              // TextFormField(
-              //   controller: registrationBloc.pass,
-              //   obscureText: true,
-              //   decoration: InputDecoration(
-              //     labelText: 'Password',
-              //     icon: Icon(Icons.lock),
-              //   ),
-              //   validator: registrationBloc.validator.passwordValidator,
-              // ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              // TextFormField(
-              //   obscureText: true,
-              //   decoration: InputDecoration(
-              //     labelText: 'Confirm Password',
-              //     icon: Icon(Icons.lock),
-              //   ),
-              //   validator: registrationBloc.validator.confirmPasswordValidator,
-              // ),
-              // SizedBox(
-              //   height: 50.0,
-              // ),
               FlatButton(
                 child: Text(
                   'Register',
@@ -229,3 +275,4 @@ class _RegistrationForm extends StatelessWidget {
     );
   }
 }
+

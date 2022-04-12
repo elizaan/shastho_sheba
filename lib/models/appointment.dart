@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'schedule.dart';
 import 'doctor.dart';
 import 'patient.dart';
@@ -16,6 +18,7 @@ class Appointment {
   Schedule schedule;
   Doctor doctor;
   Patient patient;
+  final String patient_token;
   final DateTime dateTime;
   final DateTime createdAt;
   final AppointmentStatus status;
@@ -32,6 +35,8 @@ class Appointment {
     this.status,
     this.serialNo,
     this.due,
+    this.patient_token
+
   });
 
   static double _parseDouble(dynamic value) {
@@ -42,7 +47,8 @@ class Appointment {
   }
 
   Appointment.fromJson(Map<String, dynamic> json)
-      : id = json['_id'],
+      : id = json['_id'].toString(),
+        patient_token= json['patient_token'].toString(),
         status = map[json['status']],
         serialNo = json['serial_no'],
         due = _parseDouble(json['due']),

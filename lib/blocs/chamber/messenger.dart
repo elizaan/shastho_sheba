@@ -16,7 +16,7 @@ class Messenger {
 
   Messenger(this._url, this._chamberBloc);
 
-  void init(Appointment appointment) async {
+  void init(String id) async {
     _socket = io(_url, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
@@ -33,13 +33,14 @@ class Messenger {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         String jwt = sharedPreferences.getString('jwt');
+        print(jwt);
         print('join');
         _socket.emit(
           'join',
           {
             'token': 'Bearer ' + jwt,
             'type': 'patient',
-            'chamberId': appointment.id,
+            'chamberId': id,
           },
         );
       },
@@ -56,6 +57,7 @@ class Messenger {
     };
 
     _socket.on('connection', (data) {
+      _chamberBloc.doctorStatus = true;
       print('connection');
     });
 
